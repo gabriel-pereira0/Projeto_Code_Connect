@@ -18,8 +18,8 @@ export const BlogPost = () => {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
 
-  const handleNewComments = (newComment) => {
-    setComments([newComment, ...comments]);
+  const handleNewComments = (comment) => {
+    setComments([comment, ...comments]);
   };
 
   useEffect(() => {
@@ -27,17 +27,13 @@ export const BlogPost = () => {
       .get(`/blog-posts/slug/${slug}`)
       .then((response) => {
         setPost(response.data);
+        setComments(response.data.comments);
       })
       .catch((error) => {
         if (error.status == 404) {
           navigate('/not-found');
           return;
         }
-        return response.json();
-      })
-      .then((data) => {
-        setPost(data);
-        setComments(data.comments);
       });
   }, [slug, navigate]);
 

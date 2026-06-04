@@ -9,6 +9,7 @@ import { Spinner } from '../Spinner';
 import styles from './commentmodal.module.css';
 import { Button } from '../Button';
 import { http } from '../../API';
+import { useAuth } from '../../hooks/useAuth';
 
 export const ModalComment = ({
   isEditing,
@@ -46,6 +47,7 @@ export const ModalComment = ({
             setLoading(false);
           });
       } else {
+        setLoading(true);
         http
           .post(
             `/comments/post/${postId}`,
