@@ -11,21 +11,26 @@ import { Link } from 'react-router';
 
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
+  const [comments, setComments] = useState(post.comments);
+  const { isAuthenticated } = useAuth();
 
   const handleLike = () => {
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      alert('Faça login para curtir o post!');
-      return;
-    }
-    fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((response) => {
-      if (response.ok) {
-        setLikes((oldlikes) => oldlikes + 1);
+
+    http
+      .post(
+        `/blog-posts/${post.id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then((response) => {
+        if (response.ok) {
+          setLikes((oldlikes) => oldlikes + 1);
+        }
       });
   };
 
@@ -53,7 +58,7 @@ export const CardPost = ({ post }) => {
           </div>
           <div className={styles.action}>
             <ModalComment />
-            <p>{post.comments.length}</p>
+            <p>{comments.length}</p>
           </div>
         </div>
         <Author author={post.author} />
