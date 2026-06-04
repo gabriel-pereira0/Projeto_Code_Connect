@@ -40,7 +40,7 @@ export const Login = () => {
       <Typography variant='h2' color='--offwhite'>
         Boas-vindas! Faça seu login.
       </Typography>
-      <Form action='' action={onSubmit}>
+      <Form action={onSubmit}>
         <Fieldset>
           <Label>E-mail</Label>
           <Input
