@@ -12,6 +12,9 @@ import { Link } from 'react-router';
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
   const [comments, setComments] = useState(post.comments);
+  const handleNewComments = (newComment) => {
+    setComments([comment, ...comments]);
+  };
   const { isAuthenticated } = useAuth();
 
   const handleLike = () => {
