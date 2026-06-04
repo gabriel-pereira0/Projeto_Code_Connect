@@ -30,7 +30,6 @@ export const Comment = ({ comment }) => {
           commentId={comment.id}
         />
       )}
-      {isWoner && <ModalComment isEditing={true} />}
     </div>
   );
 };

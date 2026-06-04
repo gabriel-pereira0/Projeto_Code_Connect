@@ -12,7 +12,8 @@ import { Link } from 'react-router';
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
   const [comments, setComments] = useState(post.comments);
-  const handleNewComments = (newComment) => {
+
+  const handleNewComments = (comment) => {
     setComments([comment, ...comments]);
   };
   const { isAuthenticated } = useAuth();
@@ -60,7 +61,7 @@ export const CardPost = ({ post }) => {
             <p>{likes}</p>
           </div>
           <div className={styles.action}>
-            <ModalComment />
+            <ModalComment onSuccess={handleNewComments} postId={post.id} />
             <p>{comments.length}</p>
           </div>
         </div>
