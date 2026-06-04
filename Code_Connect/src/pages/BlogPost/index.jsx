@@ -15,6 +15,7 @@ export const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
+  const [comments, setComments] = useState(post.comments);
 
   useEffect(() => {
     fetch(`http://localhost:3000/blog-posts/slug/${slug}`)

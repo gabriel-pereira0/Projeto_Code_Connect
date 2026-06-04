@@ -9,13 +9,11 @@ import { Link } from 'react-router';
 
 export const CardPost = ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
+  const [comments, setComments] = useState(post.comments);
 
   const handleLike = () => {
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      alert('Faça login para curtir o post!');
-      return;
-    }
+
     fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
       method: 'POST',
       headers: {
@@ -48,7 +46,7 @@ export const CardPost = ({ post }) => {
           </div>
           <div className={styles.action}>
             <ModalComment />
-            <p>{post.comments.length}</p>
+            <p>{comments.length}</p>
           </div>
         </div>
         <Author author={post.author} />
