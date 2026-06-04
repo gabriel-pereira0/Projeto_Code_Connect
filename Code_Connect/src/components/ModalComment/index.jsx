@@ -19,10 +19,12 @@ export const ModalComment = ({
 }) => {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const onSubmit = async (formData) => {
     const text = formData.get('text');
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
+
     if (!text.trim()) return;
 
     try {
@@ -94,7 +96,10 @@ export const ModalComment = ({
           </div>
         </form>
       </Modal>
-      <IconButton onClick={() => modalRef.current.openModal()}>
+      <IconButton
+        onClick={() => modalRef.current.openModal()}
+        disabled={!isAuthenticated}
+      >
         <IconChat fill={isEditing ? '#000' : '#888888'} />
       </IconButton>
     </>

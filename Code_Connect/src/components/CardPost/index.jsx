@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { http } from '../../API';
+import { useAuth } from '../../hooks/useAuth';
 
 import { Author } from '../Author';
 import styles from './cardpost.module.css';
@@ -13,23 +15,26 @@ export const CardPost = ({ post }) => {
   const handleNewComments = (newComment) => {
     setComments([comment, ...comments]);
   };
+  const { isAuthenticated } = useAuth();
 
   const handleLike = () => {
     const token = localStorage.getItem('access_token');
-    if (!token) {
-      alert('Faça login para curtir o post!');
-      return;
-    }
-    fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((response) => {
-      if (response.ok) {
-        setLikes((oldlikes) => oldlikes + 1);
-      }
-    });
+
+    http
+      .post(
+        `/blog-posts/${post.id}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then((response) => {
+        if (response.ok) {
+          setLikes((oldlikes) => oldlikes + 1);
+        }
+      });
   };
 
   return (
@@ -47,7 +52,11 @@ export const CardPost = ({ post }) => {
       <footer className={styles.footer}>
         <div className={styles.actions}>
           <div className={styles.action}>
-            <ThumbsUpButton loading={false} onClick={handleLike} />
+            <ThumbsUpButton
+              loading={false}
+              onClick={handleLike}
+              disabled={!isAuthenticated}
+            />
             <p>{likes}</p>
           </div>
           <div className={styles.action}>
