@@ -8,24 +8,61 @@ import { IconArrowFoward } from '../icons/IconArrowFoward';
 import { Spinner } from '../Spinner';
 import styles from './commentmodal.module.css';
 import { Button } from '../Button';
+import { http } from '../../API';
 
-export const ModalComment = ({ isEditing }) => {
+export const ModalComment = ({
+  isEditing,
+  onSuccess,
+  postId,
+  defaultValue = '',
+  commentId,
+}) => {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (formData) => {
     const text = formData.get('text');
-
+    const token = localStorage.getItem('token');
     if (!text.trim()) return;
 
     try {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-      modalRef.current.closeModal();
+      if (isEditing) {
+        http
+          .patch(
+            `/comments/${commentId}`,
+            { text },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          )
+          .then((response) => {
+            modalRef.current.closeModal();
+            onSuccess(response.data);
+            setLoading(false);
+          });
+      } else {
+        http
+          .post(
+            `/comments/post/${postId}`,
+            { text },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          )
+          .then((response) => {
+            modalRef.current.closeModal();
+            onSuccess(response.data);
+            setLoading(false);
+          });
+      }
     } catch (error) {
-      console.error('Erro ao criar/atualizar comentário:', error);
+      alert('Ocorreu um erro. Tente novamente.');
+      setLoading(false);
     }
   };
   return (
@@ -42,6 +79,7 @@ export const ModalComment = ({ isEditing }) => {
             rows={8}
             name='text'
             placeholder='Digite aqui...'
+            defaultValue={defaultValue}
           />
           <div className={styles.footer}>
             <Button disabled={loading} type='submit'>

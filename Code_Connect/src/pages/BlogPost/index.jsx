@@ -15,6 +15,11 @@ export const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
+  const [comments, setComments] = useState([]);
+
+  const handleNewComments = (newComment) => {
+    setComments([newComment, ...comments]);
+  };
 
   useEffect(() => {
     fetch(`http://localhost:3000/blog-posts/slug/${slug}`)
@@ -24,7 +29,10 @@ export const BlogPost = () => {
         }
         return response.json();
       })
-      .then((data) => setPost(data));
+      .then((data) => {
+        setPost(data);
+        setComments(data.comments);
+      });
   }, [slug, navigate]);
 
   if (!post) {
@@ -53,8 +61,8 @@ export const BlogPost = () => {
               <p>{post.likes}</p>
             </div>
             <div className={styles.action}>
-              <ModalComment />
-              <p>{post.comments.length}</p>
+              <ModalComment onSuccess={handleNewComments} postId={post?.id} />
+              <p>{comments.length}</p>
             </div>
           </div>
           <Author author={post.author} />
@@ -64,7 +72,7 @@ export const BlogPost = () => {
       <div className={styles.code}>
         <ReactMarkdown>{post.markdown}</ReactMarkdown>
       </div>
-      <CommentList comments={post.comments} />
+      <CommentList comments={comments} />
     </main>
   );
 };
