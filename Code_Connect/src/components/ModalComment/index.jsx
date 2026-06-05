@@ -31,38 +31,18 @@ export const ModalComment = ({
     try {
       setLoading(true);
       if (isEditing) {
-        http
-          .patch(
-            `/comments/${commentId}`,
-            { text },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          )
-          .then((response) => {
-            modalRef.current.closeModal();
-            onSuccess(response.data);
-            setLoading(false);
-          });
+        http.patch(`/comments/${commentId}`, { text }).then((response) => {
+          modalRef.current.closeModal();
+          onSuccess(response.data);
+          setLoading(false);
+        });
       } else {
         setLoading(true);
-        http
-          .post(
-            `/comments/post/${postId}`,
-            { text },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          )
-          .then((response) => {
-            modalRef.current.closeModal();
-            onSuccess(response.data);
-            setLoading(false);
-          });
+        http.post(`/comments/post/${postId}`, { text }).then((response) => {
+          modalRef.current.closeModal();
+          onSuccess(response.data);
+          setLoading(false);
+        });
       }
     } catch (error) {
       alert('Ocorreu um erro. Tente novamente.');
