@@ -5,8 +5,9 @@ import styles from './comment.module.css';
 import { Avatar } from '../Avatar';
 import { ModalComment } from '../ModalComment';
 import { useAuth } from '../../hooks/useAuth';
+import { IconButton } from '../IconButton';
 
-export const Comment = ({ comment }) => {
+export const Comment = ({ comment, onDelete }) => {
   const [text, setText] = useState(comment.text);
   const { user } = useAuth();
 
@@ -29,6 +30,9 @@ export const Comment = ({ comment }) => {
           defaultValue={text}
           commentId={comment.id}
         />
+      )}
+      {isOwner && (
+        <IconButton onClick={() => onDelete(comment.id)}>Excluir</IconButton>
       )}
     </div>
   );
