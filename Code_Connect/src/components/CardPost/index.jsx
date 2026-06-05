@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { http } from '../../API';
 import { useAuth } from '../../hooks/useAuth';
+import { usePostInteractions } from '../../hooks/usePostInteractions';
 
 import { Author } from '../Author';
 import styles from './cardpost.module.css';
@@ -10,23 +11,18 @@ import { ModalComment } from '../ModalComment';
 import { Link } from 'react-router';
 
 export const CardPost = ({ post }) => {
-  const [likes, setLikes] = useState(post.likes);
-  const [comments, setComments] = useState(post.comments);
+  const {
+    likes,
+    comments,
+    handleNewComment,
+    handleLikeButton,
+    handleDeleteComment,
+  } = usePostInteractions(post);
 
-  const handleNewComments = (comment) => {
-    setComments([comment, ...comments]);
-  };
   const { isAuthenticated } = useAuth();
 
-  const handleLike = () => {
-    const token = localStorage.getItem('access_token');
-    setLikes((oldlikes) => oldlikes + 1);
-
-    http.post(`/blog-posts/${post.id}/like`, {}).then((response) => {
-      if (response.ok) {
-        setLikes((oldlikes) => oldlikes + 1);
-      }
-    });
+  const onLikeButtonClick = () => {
+    handleLikeButton(post.id);
   };
 
   return (
@@ -46,13 +42,13 @@ export const CardPost = ({ post }) => {
           <div className={styles.action}>
             <ThumbsUpButton
               loading={false}
-              onClick={handleLike}
+              onClick={onLikeButtonClick}
               disabled={!isAuthenticated}
             />
             <p>{likes}</p>
           </div>
           <div className={styles.action}>
-            <ModalComment onSuccess={handleNewComments} postId={post.id} />
+            <ModalComment onSuccess={handleNewComment} postId={post.id} />
             <p>{comments.length}</p>
           </div>
         </div>

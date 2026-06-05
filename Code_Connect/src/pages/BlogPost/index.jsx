@@ -11,32 +11,24 @@ import { useParams } from 'react-router';
 import { ModalComment } from '../../components/ModalComment';
 import { useNavigate } from 'react-router';
 import { http } from '../../API';
+import { useAuth } from '../../hooks/useAuth';
+import { usePostInteractions } from '../../hooks/usePostInteractions';
 
 export const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const navigate = useNavigate();
-  const [comments, setComments] = useState([]);
+  const { isAuthenticated } = useAuth();
+  const {
+    comments,
+    likes,
+    handleNewComment,
+    handleDeleteComment,
+    handleLikeButton,
+  } = usePostInteractions(post);
 
-  const handleNewComments = (comment) => {
-    setComments([comment, ...comments]);
-  };
-
-  const handleDeleteComment = (commentId) => {
-    const isConfirmed = confirm('Deseja realmente excluir este comentário?');
-
-    if (isConfirmed) {
-      http
-        .delete(`/comments/${commentId}`)
-        .then(() => {
-          setComments((oldComments) =>
-            oldComments.filter((comment) => comment.id !== commentId),
-          );
-        })
-        .catch((error) => {
-          console.error('Error deleting comment:', error);
-        });
-    }
+  const onLikeClick = () => {
+    handleLikeButton(post?.id);
   };
 
   useEffect(() => {
@@ -44,7 +36,6 @@ export const BlogPost = () => {
       .get(`/blog-posts/slug/${slug}`)
       .then((response) => {
         setPost(response.data);
-        setComments(response.data.comments);
       })
       .catch((error) => {
         if (error.status == 404) {
@@ -76,11 +67,15 @@ export const BlogPost = () => {
         <footer className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <ThumbsUpButton loading={false} />
-              <p>{post.likes}</p>
+              <ThumbsUpButton
+                loading={false}
+                onClick={onLikeClick}
+                disabled={!isAuthenticated}
+              />
+              <p>{likes}</p>
             </div>
             <div className={styles.action}>
-              <ModalComment onSuccess={handleNewComments} postId={post?.id} />
+              <ModalComment onSuccess={handleNewComment} postId={post?.id} />
               <p>{comments.length}</p>
             </div>
           </div>
